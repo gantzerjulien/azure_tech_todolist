@@ -37,7 +37,7 @@ class TaskEntity extends AbstractIdentifiableEntity {
     this.endHour,
     this.date,
     this.sendNotification,
-    this.content = "",
+    this.content,
     this.fkUserId
   });
 }

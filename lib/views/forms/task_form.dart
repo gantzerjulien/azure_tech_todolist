@@ -8,11 +8,13 @@ import 'package:my_widgets/widgets/my_text.dart';
 
 class TaskForm extends AbstractFormWithData {
   final DateTime date;
+  final TaskEntity? task;
 
   const TaskForm({
     super.key,
     required super.isReadyChangeNotifier,
-    required this.date
+    required this.date,
+    this.task
   });
 
   @override
@@ -20,22 +22,36 @@ class TaskForm extends AbstractFormWithData {
 }
 
 class TaskFormState extends AbstractFormWithDataState<TaskForm, TaskEntity> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _contentController = TextEditingController();
-  final TextEditingController _startHourController = TextEditingController();
-  final TextEditingController _endHourController = TextEditingController();
-  final ValueNotifier<bool> _sendNotificationNotifier = ValueNotifier(false);
+  late final TextEditingController _titleController = TextEditingController(text: widget.task?.title);
+  late final TextEditingController _contentController = TextEditingController(text: widget.task?.content);
+  late final TextEditingController _startHourController = TextEditingController(text: widget.task?.startHour.toString());
+  late final TextEditingController _endHourController = TextEditingController(text: widget.task?.endHour.toString());
+  late final ValueNotifier<bool> _sendNotificationNotifier = ValueNotifier(widget.task?.sendNotification ?? false);
 
   @override
   TaskEntity getData() {
-    return TaskEntity.create(
-      title: _titleController.text,
-      startHour: int.parse(_startHourController.text),
-      endHour: int.parse(_endHourController.text),
-      date: widget.date,
-      sendNotification: _sendNotificationNotifier.value,
-      fkUserId: globalUserConnected!.id
-    );
+    if (widget.task != null) {
+      return TaskEntity(
+        id: widget.task!.id,
+        title: _titleController.text,
+        content: _contentController.text,
+        startHour: int.parse(_startHourController.text),
+        endHour: int.parse(_endHourController.text),
+        date: widget.date,
+        sendNotification: _sendNotificationNotifier.value,
+        fkUserId: globalUserConnected!.id
+      );
+    } else {
+      return TaskEntity.create(
+        title: _titleController.text,
+        content: _contentController.text,
+        startHour: int.parse(_startHourController.text),
+        endHour: int.parse(_endHourController.text),
+        date: widget.date,
+        sendNotification: _sendNotificationNotifier.value,
+        fkUserId: globalUserConnected!.id
+      );
+    }
   }
 
   String? _validateHourFormat(String str) {

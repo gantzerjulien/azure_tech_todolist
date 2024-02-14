@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:my_pages/utils/abstract_loading_page_state.dart';
 import 'package:azure_tech_todolist/models/task_entity.dart';
 import 'package:my_widgets/enums/color_enum.dart';
+import 'package:my_widgets/enums/icon_enum.dart';
 import 'package:my_widgets/models/bool_change_notifier.dart';
 import 'package:my_widgets/utils/my_pop_up_utils.dart';
 import 'package:my_widgets/utils/my_snackbar_utils.dart';
+import 'package:my_widgets/widgets/my_icon_button.dart';
+import 'package:my_widgets/widgets/my_text.dart';
 
 class DayPage extends StatefulWidget {
   static const String route = "calendar/day";
@@ -34,10 +37,28 @@ class _DayPageState extends AbstractLoadingPageState<DayPage> {
   }
 
   Future<void> _loadData() async {
-    _tasks = await globalTaskRepository.findByObjectAnd(TaskEntity.empty(
-      date: widget.date,
-      fkUserId: globalUserConnected!.id
-    ));
+    _tasks = await globalTaskRepository.findByObjectAnd(
+      TaskEntity.empty(
+        date: widget.date,
+        fkUserId: globalUserConnected!.id
+      )
+    );
+  }
+
+  Future<bool> _update() async {
+    if (await _taskFormKey.currentState!.validate()) {
+      TaskEntity task = _taskFormKey.currentState!.getData();
+      await globalTaskRepository.updateObject(task);
+      if (context.mounted) {
+        MySnackBarUtils.showSuccess(context, "Tâche modifiée");
+      }
+
+      super.loadData(_loadData);
+
+      return true;
+    } else {
+      return false;
+    }
   }
 
   Future<bool> _save() async {
@@ -78,27 +99,69 @@ class _DayPageState extends AbstractLoadingPageState<DayPage> {
       saveFunction: _save,
       isReadyToSave: _isReadyChangeNotifier
     );
-
   }
 
+  Future<void> _updateTask(TaskEntity task) async {
+    MyPopUpUtils.widgetPopUp(
+        context: context,
+        title: "Modifier la tâche",
+        widget: SingleChildScrollView(
+          child: TaskForm(
+            key: _taskFormKey,
+            isReadyChangeNotifier: _isReadyChangeNotifier,
+            date: widget.date,
+            task: task
+          )
+        ),
+        saveFunction: _update,
+        isReadyToSave: _isReadyChangeNotifier
+    );
+  }
 
-    @override
+  List<Widget> _getTasks() {
+    List<Widget> children = [];
+
+    for (TaskEntity task in _tasks) {
+      children.add(
+        ListTile(
+          title: MyText(task.title!),
+          leading: MyText("${task.startHour}h -> ${task.endHour}h"),
+          //onLongPress: TODO: update the timeline,
+          onTap: () => _updateTask(task),
+          trailing: MyIconButton(iconEnum: MyIconEnum.close, onPressed: () => _delete(task))
+        )
+      );
+    }
+
+    return children;
+  }
+
+  Future<void> _delete(TaskEntity task) async {
+    await globalTaskRepository.deleteByPrimaryKey(task.id!);
+    setState(() {
+      _tasks.remove(task);
+    });
+  }
+
+  @override
   Widget getWidget() {
     return AzureTechTodolistScaffold(
-        title: "${widget.date.day}/${widget.date.month}", //TODO: format date
-        canGoBack: true,
-        body: Column(
-          children: [
-            Center(
-              child: FloatingActionButton(
-                onPressed: _createTask,
-                foregroundColor: MyColorEnum.white,
-                backgroundColor: MyColorEnum.darkGreen,
-                shape: const CircleBorder(),
-                child: const Text("+")
-              ),
-            ),
-
+      title: "${widget.date.day}/${widget.date.month}", //TODO: format date
+      canGoBack: true,
+      body: Column(
+        children: [
+          Center(
+            child: FloatingActionButton(
+              onPressed: _createTask,
+              foregroundColor: MyColorEnum.white,
+              backgroundColor: MyColorEnum.darkGreen,
+              shape: const CircleBorder(),
+              child: const Text("+")
+            )
+          ),
+          Expanded(
+            child: SingleChildScrollView(child: Column(children: _getTasks()))
+          )
         ]
       )
     );
