@@ -1,13 +1,13 @@
 import 'package:azure_tech_todolist/controllers/services/database_global.dart';
 import 'package:azure_tech_todolist/views/forms/task_form.dart';
 import 'package:azure_tech_todolist/views/widgets/azure_tech_todolist_scaffold.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:my_pages/utils/abstract_loading_page_state.dart';
 import 'package:azure_tech_todolist/models/task_entity.dart';
+import 'package:my_widgets/enums/color_enum.dart';
 import 'package:my_widgets/models/bool_change_notifier.dart';
 import 'package:my_widgets/utils/my_pop_up_utils.dart';
 import 'package:my_widgets/utils/my_snackbar_utils.dart';
-import 'package:my_widgets/widgets/my_elevated_button.dart';
 
 class DayPage extends StatefulWidget {
   static const String route = "calendar/day";
@@ -85,12 +85,22 @@ class _DayPageState extends AbstractLoadingPageState<DayPage> {
     @override
   Widget getWidget() {
     return AzureTechTodolistScaffold(
-        title: _tasks.length.toString(), //TODO: add date here
+        title: "${widget.date.day}/${widget.date.month}", //TODO: format date
         canGoBack: true,
-        body: MyElevatedButton(
-          text: "+",
-          onPressed: _createTask,
-        )
+        body: Column(
+          children: [
+            Center(
+              child: FloatingActionButton(
+                onPressed: _createTask,
+                foregroundColor: MyColorEnum.white,
+                backgroundColor: MyColorEnum.darkGreen,
+                shape: const CircleBorder(),
+                child: const Text("+")
+              ),
+            ),
+
+        ]
+      )
     );
   }
 }
