@@ -20,7 +20,7 @@ class _CalendarPageState extends State<CalendarPage> {
       body: Center(
         child: MyElevatedButton(
           text: "Selection du jour",
-          onPressed: () => Navigator.pushNamed(context, DayPage.route),
+          onPressed: () => Navigator.pushNamed(context, DayPage.route, arguments: DateTime(2024))
         )
       )
     );

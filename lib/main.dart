@@ -28,8 +28,21 @@ class MyApp extends StatelessWidget {
           ConnexionPage.route : (context) => const ConnexionPage(),
           InscriptionPage.route : (context) => const InscriptionPage(),
           CalendarPage.route : (context) => const CalendarPage(),
-          DayPage.route : (context) => const DayPage(),
           ProfilePage.route : (context) => const ProfilePage(),
+        },
+        onGenerateRoute: (settings) {
+          if (settings.name == DayPage.route) {
+            return MaterialPageRoute(
+              builder: (context) {
+                return DayPage(
+                  date: settings.arguments as DateTime
+                );
+              }
+            );
+          } else {
+            //TODO: Make an error page
+            return null;
+          }
         }
     );
   }
