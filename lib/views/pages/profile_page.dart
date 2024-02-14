@@ -1,3 +1,4 @@
+import 'package:azure_tech_todolist/controllers/services/database_global.dart';
 import 'package:azure_tech_todolist/views/pages/connexion_page.dart';
 import 'package:azure_tech_todolist/views/widgets/azure_tech_todolist_scaffold.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,13 +13,20 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
+  Future<void> _disconnect() async {
+    globalUserConnected = null;
+
+    await Navigator.pushReplacementNamed(context, ConnexionPage.route);
+  }
+
   @override
   Widget build(BuildContext context) {
     return AzureTechTodolistScaffold(
       title: "Profil",
       body: MyElevatedButton(
         text: "Déconnecter",
-        onPressed: () => Navigator.pushReplacementNamed(context, ConnexionPage.route)
+        onPressed: _disconnect
       )
     );
   }

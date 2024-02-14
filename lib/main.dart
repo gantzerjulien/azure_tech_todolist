@@ -6,6 +6,7 @@ import 'package:azure_tech_todolist/views/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:my_pages/utils/abstract_loading_page_state.dart';
 import 'package:my_widgets/enums/color_enum.dart';
+import 'package:azure_tech_todolist/controllers/services/database_global.dart';
 
 void main() {
   runApp(const MyApp());
@@ -56,6 +57,6 @@ class _HomePageState extends AbstractLoadingPageState<HomePage> {
   }
 
   Future<void> _loadData() async {
-    //TODO: load the database
+    await DatabaseBuilder.buildDb();
   }
 }
