@@ -349,7 +349,7 @@ packages:
     description:
       path: "."
       ref: master
-      resolved-ref: "30f1d4fc68f06ec98d408969c8e7c6993ee688b7"
+      resolved-ref: "67779e6430716a7a4d90b67a9af24323ff0777cc"
       url: "git@github.com:Les-apps-de-Tim/my_forms.git"
     source: git
     version: "0.0.1"
@@ -385,7 +385,7 @@ packages:
     description:
       path: "."
       ref: master
-      resolved-ref: "3b390b0cc4d86b11a10a851b88c41b9476afc112"
+      resolved-ref: "0ad0b4ed4e449dab4a2494da97a2da4b0dc50ff3"
       url: "git@github.com:Les-apps-de-Tim/my_widgets.git"
     source: git
     version: "0.0.1"
@@ -538,6 +538,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.8.2"
+  video_player_android:
+    dependency: transitive
+    description:
+      name: video_player_android
+      sha256: "4dd9b8b86d70d65eecf3dcabfcdfbb9c9115d244d022654aba49a00336d540c2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.12"
   video_player_avfoundation:
     dependency: transitive
     description:
