@@ -1,4 +1,5 @@
 import 'package:azure_tech_todolist/models/month_enum.dart';
+import 'package:azure_tech_todolist/views/pages/day_page.dart';
 import 'package:flutter/material.dart';
 
 class Calendar extends StatefulWidget {
@@ -45,10 +46,11 @@ class _CalendarState extends State<Calendar> {
             mainAxisSpacing: 10.0,
           ),
           delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  if (index >= 7 && index - 7 < firstDay) {
-                    return Container();
-                  }
+            childCount: 7 + firstDay + widget.month.getNumberOfDays(widget.year),
+            (BuildContext context, int index) {
+              if (index >= 7 && index - 7 < firstDay) {
+                return Container();
+              }
               String? day;
               switch (index) {
                 case 0:
@@ -83,17 +85,22 @@ class _CalendarState extends State<Calendar> {
               } else if (index % 7 == 6) {
                 tileColor = const Color(0xFFBCAAA4);
               }
+              int dayNumber = index - 7 - firstDay + 1;
               return Container(
                 color: tileColor,
                 child: Center(
-                  child: Text('${day ?? index - 7 - firstDay + 1}'),
-                ),
+                  child: TextButton(
+                    onPressed: () => Navigator.pushNamed(context, DayPage.route,
+                        arguments: DateTime(widget.year, widget.month.intValue, dayNumber)
+                    ),
+                    child: Text('${day ?? dayNumber}'),
+                  )
+                )
               );
-            },
-            childCount: 7 + firstDay + widget.month.getNumberOfDays(widget.year),
-          ),
-        ),
-      ],
+            }
+          )
+        )
+      ]
     );
   }
 }

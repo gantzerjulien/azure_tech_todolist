@@ -1,4 +1,5 @@
 import 'package:azure_tech_todolist/controllers/services/database_global.dart';
+import 'package:azure_tech_todolist/controllers/services/date_service.dart';
 import 'package:azure_tech_todolist/views/forms/task_form.dart';
 import 'package:azure_tech_todolist/views/widgets/azure_tech_todolist_scaffold.dart';
 import 'package:flutter/material.dart';
@@ -125,7 +126,7 @@ class _DayPageState extends AbstractLoadingPageState<DayPage> {
       children.add(
         ListTile(
           title: MyText(task.title!),
-          leading: MyText("${task.startHour}h -> ${task.endHour}h"),
+          leading: MyText("${DateService.formatHour(task.startHour!)} -> ${DateService.formatHour(task.endHour!)}"),
           //onLongPress: TODO: update the timeline,
           onTap: () => _updateTask(task),
           trailing: MyIconButton(iconEnum: MyIconEnum.close, onPressed: () => _delete(task))
@@ -146,7 +147,7 @@ class _DayPageState extends AbstractLoadingPageState<DayPage> {
   @override
   Widget getWidget() {
     return AzureTechTodolistScaffold(
-      title: "${widget.date.day}/${widget.date.month}", //TODO: format date
+      title: DateService.formatDate(widget.date),
       canGoBack: true,
       body: Column(
         children: [

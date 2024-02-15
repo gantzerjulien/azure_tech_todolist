@@ -1,4 +1,5 @@
 import 'package:azure_tech_todolist/controllers/services/database_global.dart';
+import 'package:azure_tech_todolist/controllers/services/date_service.dart';
 import 'package:azure_tech_todolist/models/task_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:my_forms/abstract_form_widget_model.dart';
@@ -54,27 +55,6 @@ class TaskFormState extends AbstractFormWithDataState<TaskForm, TaskEntity> {
     }
   }
 
-  String? _validateHourFormat(String str) {
-    int? hour = int.tryParse(str);
-
-    if (hour == null) {
-      double? d = double.tryParse(str);
-      return d == null ? "L'heure doit uniquement contenir des chiffres." : "L'heure doit être un nombre entier.";
-    }
-
-    if (hour > 24) {
-      return "L'heure ne doit pas dépasser 24.";
-    }
-
-    if (hour < 0) {
-      return "L'heure ne doit pas être un nombre négatif.";
-    }
-
-    //TODO: find a way to check if startHour is after endHour
-
-    return null;
-  }
-
   @override
   List<AbstractFormWidgetModel> getWidgetModelList() {
     List<AbstractFormWidgetModel> res = [];
@@ -99,7 +79,7 @@ class TaskFormState extends AbstractFormWithDataState<TaskForm, TaskEntity> {
         controller: _startHourController,
         text: "Heure de début",
         keyBoardType: TextInputType.number,
-        validator: _validateHourFormat
+        validator: DateService.validateHourFormat
       )
     );
 
@@ -108,7 +88,7 @@ class TaskFormState extends AbstractFormWithDataState<TaskForm, TaskEntity> {
         controller: _endHourController,
         text: "Heure de fin",
         keyBoardType: TextInputType.number,
-        validator: _validateHourFormat
+        validator: DateService.validateHourFormat
       )
     );
 

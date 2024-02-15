@@ -1,3 +1,4 @@
+import 'package:azure_tech_todolist/controllers/services/date_service.dart';
 import 'package:azure_tech_todolist/models/month_enum.dart';
 import 'package:azure_tech_todolist/views/widgets/azure_tech_todolist_scaffold.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,18 +20,25 @@ class CalendarPage extends StatefulWidget {
 class _CalendarPageState extends State<CalendarPage> {
   late final ValueNotifier<MonthEnum> _monthNotifier;
   late final TextEditingController _yearController;
+  late final ValueNotifier<FormStatusEnum> _yearNotifier;
   late int _year;
   late MonthEnum _month;
+  late FormStatusEnum _statusYearForm;
 
   @override
   void initState() {
     super.initState();
     _year = 2024;
     _month = MonthEnum.values[DateTime.now().month - 1];
+    _statusYearForm = FormStatusEnum.pristine;
+
     _monthNotifier = ValueNotifier<MonthEnum>(_month);
     _yearController = TextEditingController(text: _year.toString());
+    _yearNotifier = ValueNotifier(_statusYearForm);
+
     _monthNotifier.addListener(_setYear);
     _yearController.addListener(_setMonth);
+    _yearNotifier.addListener(_setStatusYearForm);
   }
 
   @override
@@ -38,6 +46,11 @@ class _CalendarPageState extends State<CalendarPage> {
     super.dispose();
     _monthNotifier.removeListener(_setYear);
     _yearController.removeListener(_setMonth);
+    _yearNotifier.removeListener(_setStatusYearForm);
+  }
+
+  void _setStatusYearForm() {
+    setState(() => _statusYearForm = _yearNotifier.value);
   }
 
   void _setYear() {
@@ -45,7 +58,10 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   void _setMonth() {
-     setState(() => _year = int.parse(_yearController.text));
+    int? year = int.tryParse(_yearController.text);
+    if (year != null) {
+      setState(() => _year = year);
+    }
   }
 
   @override
@@ -60,10 +76,10 @@ class _CalendarPageState extends State<CalendarPage> {
                 child: MyTextFormField(
                   controller: _yearController,
                   text: "Année",
-                  statusValueNotifier:  ValueNotifier(FormStatusEnum.pristine),
-                  keyBoardType: TextInputType.number
-                //TODO: add validator
-                ),
+                  statusValueNotifier: _yearNotifier,
+                  keyBoardType: TextInputType.number,
+                  validator: DateService.validateYearFormat,
+                )
               ),
 
               Expanded(
@@ -77,7 +93,12 @@ class _CalendarPageState extends State<CalendarPage> {
               ),
             ]
           ),
-          Expanded(child: Calendar(year: _year, month: _month))
+          if (_statusYearForm == FormStatusEnum.focus)
+            const Text("Veuillez valider la modification de la date")
+          else if (_statusYearForm == FormStatusEnum.invalid && _statusYearForm == FormStatusEnum.waiting)
+            const Text("Veuillez vérifier le format de la date")
+          else
+            Expanded(child: Calendar(year: _year, month: _month))
         ],
       )
     );
